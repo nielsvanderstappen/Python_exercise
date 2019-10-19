@@ -1,0 +1,85 @@
+def prijsberekening(km, soort_ziekenwagen):
+	if soortZiekenwagen(soort_ziekenwagen) == False:
+		basisbedrag = 25
+		prijskm = 2.25
+		totaal = 0 + basisbedrag
+		if km > 11:
+			km -= 10
+			totaal += km * prijskm
+		elif km > 21:
+			km -= 20
+			totaal += (10 * 2.25)+(km * 1.75)
+	elif soortZiekenwagen(soort_ziekenwagen) == True:
+		prijskm = 1.75
+		basisbedrag = 20
+		totaal = 0 + basisbedrag
+		if km > 11:
+			km -= 10
+			totaal += km * prijskm
+		elif km > 21:
+			km -= 20
+			totaal += (10 * prijskm) + (km * 1.15)
+	else:
+		print("Doe een geldige invoer").upper()
+	return totaal
+
+def soortZiekenwagen(soort_ziekenwagen):
+	if soort_ziekenwagen == "G":
+		soort_ziekenwagen = True
+	elif soort_ziekenwagen == "R":
+		soort_ziekenwagen = False
+	else:
+		print("foutieve ingave")
+	return soort_ziekenwagen
+
+def mutualiteit(km, lid, soort_ziekenwagen):
+	terugstorting = 0
+	if lid == "JA":
+		if soortZiekenwagen(soort_ziekenwagen) == False:
+			BASISSOM = 15
+			if km > 11:
+				terugstorting = BASISSOM + ((km - 10) * 1.5)
+		elif soortZiekenwagen(soort_ziekenwagen) == True:
+			BASISSOM = 10
+			if km > 11:
+				terugstorting = BASISSOM + ((km - 10) * 1)
+	else:
+		terugstorting = 0
+	return terugstorting
+
+def wekelijkseKostTotaal(km):
+	weektotaal = 0
+	weektotaal += prijsberekening(km, soort_ziekenwagen)
+	return weektotaal
+
+
+
+def main():
+	dag = 0
+	aantal_leden = 0
+	naam_slachtoffer = str(input("wat is de naam van het slachtoffer? "))
+	while naam_slachtoffer != "/":
+		soort_ziekenwagen = str(input("wat is de soort ziekenwagen? R voor reanimatie, G voor gewoon: ")).upper()
+		soortZiekenwagen(soort_ziekenwagen)
+		km = int(input("hoeveel kilometer is het ongeval?: "))
+		lid = str(input("Lid van Bond der Mutualiteiten?: (JA/NEE) ")).upper()
+		if lid == "JA":
+			aantal_leden += 1
+		mutualiteit(km, lid, soort_ziekenwagen)
+		print("------------------------------------------")
+		print("naam: ", naam_slachtoffer)
+		print("bruttoprijs: ", prijsberekening(km, soort_ziekenwagen))
+		print("terugbetaald bedrag: ",mutualiteit(km, lid, soort_ziekenwagen))
+		print("totaal: ", prijsberekening(km, soort_ziekenwagen) - mutualiteit(km, lid, soort_ziekenwagen))
+		dag += 1
+		if dag > 7:
+			print()
+			print("weektotaal van de kosten: ", wekelijkseKostTotaal(km))
+			print()
+		naam_slachtoffer = str(input("wat is de naam?, / om te eindigen "))
+	print()
+	print("aantal vervoerde slachtoffers: ", dag)
+	print("aantal leden: ", aantal_leden / dag * 100, "%" )
+
+if __name__ == '__main__':
+	main()
