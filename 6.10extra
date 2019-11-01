@@ -1,0 +1,110 @@
+def main():
+	list_kopernamen = []
+	list_priorities = []
+	list_bouwlening = []
+	list_socialewoning = []
+
+	code = str(input("geef code "))
+	totaalcounter = 0
+	hoogste_loon = 0
+	hoogste_loon_type = ""
+	while code[0] != 'S':
+		totaalcounter += 1
+		checkcode(code.upper(), list_socialewoning)
+		naam_man = str(input("Geef Naam + voornaam van de man "))
+		naam_vrouw = str(input("Geef Naam + voornaam voor de vrouw "))
+		inkomen_man = float(input("Geef inkomen van de man in "))
+		inkomen_vrouw = float(input("Geef inkomen van de vrouw in "))
+		if inkomen_man > hoogste_loon:
+			if naam_vrouw == "xx":
+				hoogste_loon_type = "alleenstaande man"
+			else:
+				hoogste_loon_type = "Gezin"
+			hoogste_loon = inkomen_man
+		if inkomen_vrouw > hoogste_loon:
+			if naam_man == "xx":
+				hoogste_loon_type = "alleenstaande vrouw"
+			else:
+				hoogste_loon_type = "gezin"
+			hoogste_loon = inkomen_vrouw
+
+		if naam_vrouw == "xx" and inkomen_vrouw == 0:
+			list_kopernamen.append("De heer {}".format(makeInitials(naam_man)))
+			alleenstaand = True
+		if naam_man == "xx" and inkomen_man == 0:
+			list_kopernamen.append("Mevrouw {}".format(makeInitials(naam_vrouw)))
+			alleenstaand = True
+		elif naam_vrouw != "xx" and naam_man != "xx":
+			naam_vrouw = makeInitials(naam_vrouw)
+			list_kopernamen.append("De heer en mevrouw {}-{}".format(makeInitials(naam_man), naam_vrouw[2:]))
+			alleenstaand = False
+		aantal_kinderen = int(input("Hoeveel kinderen hebben jullie? "))
+
+		list_priorities.append(berekeningLening(inkomen_man, inkomen_vrouw, aantal_kinderen, code))
+		list_bouwlening.append(bouwlening(code, alleenstaand, aantal_kinderen, inkomen_man, inkomen_vrouw))
+		code = str(input('geef nieuwe code')).upper()
+
+	print("\n{:<2} {:<50}{:>10} {:>10}".format("nr.", "Familienaam", "Prioriteit", "bouwlening"))
+	for i in range(len(list_kopernamen)):
+		print("{:>2}. {:<50}{:<10} {:<10}".format(i + 1, list_kopernamen[i], list_priorities[i] * "*",
+		                                          list_bouwlening[i]))
+
+	print("\n")
+	print("het aantal kandidaatkopers die in een sociale woning wonen is {:.1f}%".format(
+		len(list_socialewoning) / totaalcounter * 100))
+	print("Het hoogste loon was van een {}, met {} euro".format(hoogste_loon_type, hoogste_loon))
+
+
+def makeInitials(fullname):
+	initials = fullname.split()
+	initials = initials[-1]
+	initials = initials[0].upper() + "."
+	rest = fullname.split()
+	derest = ""
+	for x in range(len(rest) - 1):
+		derest += (rest[x]) + " "
+	newName = initials + " " + derest
+
+	return newName
+
+
+def checkcode(code, list_socialewoning):
+	if code[0] == "J":
+		list_socialewoning.append(1)
+		while len(code) != 5:
+			code = str(input("Code moet starten met N of J, en eindigen op 4 cijfers"))
+
+	else:
+		while code[0] != "N" or len(code) != 1:
+			code = str(input("Indien de code \"N\" is, mag hij niet vervolgd worden door andere tekens"))
+
+
+def berekeningLening(inkomen_man, inkomen_vrouw, kinderen, code):
+	inkomen = inkomen_man + inkomen_vrouw
+	if inkomen < 2000 and kinderen >= 3:
+		prioriteit = 1
+	elif inkomen < 2000 and kinderen < 3:
+		prioriteit = 2
+	elif inkomen >= 2000 and inkomen < 2500:
+		prioriteit = 3
+	elif inkomen >= 2500:
+		prioriteit = 4
+	elif 2019 - int(code[1:]) < 5:
+		prioriteit = 5
+	return prioriteit
+
+
+def bouwlening(code, alleenstaand, kinderen, inkomen_man, inkomen_vrouw):
+	if code[0] == "N":
+		if alleenstaand == True and kinderen >= 1:
+			return "J"
+		elif alleenstaand == True and inkomen_man < 1500 or inkomen_vrouw < 1500:
+			return "J"
+		elif alleenstaand == False:
+			return "_"
+	else:
+		return "_"
+
+
+if __name__ == '__main__':
+	main()
