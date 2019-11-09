@@ -1,0 +1,66 @@
+from random import randint
+
+letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
+letters_score = [ord("a"), 0, ord("c"), 0, ord("e"), 0, 0, 0, ord("i"), 0, 0, 0, ord("m"), ord("n"), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+scorelijst = []
+scorenamen = []
+
+def main():
+	berekeningScore()
+	bepalingprijs()
+
+def bepalingprijs():
+	hoogste = 0
+	for score in scorelijst:
+		if score > hoogste:
+			hoogste = score
+
+	randomgetal = randint(0, 9999)
+	while str(randomgetal)[-1] == 0:
+		randomgetal = randint(0, 9999)
+
+	aantal_tickets = 0
+	for number in str(randomgetal):
+		aantal_tickets += int(number)
+
+	naam = scorenamen[scorelijst.index(hoogste)]
+	print("{} : Jij hebt gewonnen!".format(naam))
+	print("Jouw score is: {}".format(hoogste))
+	print("het random gegenereerd getal is {}".format(randomgetal))
+	print("{}, jij wint hierbij {} filmtickets!".format(naam, aantal_tickets))
+
+
+
+def berekeningScore():
+	student_naam = str(input("Wat is jouw naam? "))
+	while student_naam != "xxx" and student_naam != "qqq":
+		geboortejaar = int(input("wat is jouw geboortejaar? "))
+		visite = int(input("hoe vaak per maand breng je een bezoek aan kinepolis?: 1 = weinig, 2 = matig, 3= veel "))
+		versnapering = str(input("Welke versnapering nuttig je in Kinepolis?: P = Popcorn, C = Chips, N = Niets ")).lower()
+		score = 0
+		counter = 0
+		for letter in student_naam.lower():
+			score += letters_score[letters.index(letter)] * (student_naam.find(letter, counter) + 1)
+			counter += 1
+		score += geboortejaar
+
+		if visite == 1:
+			score = score / 2
+		elif visite == 2:
+			score = score * 2
+		else:
+			score = score * 3
+
+		if versnapering == "n" and visite == 1 or visite == 2:
+			score -= 1050
+
+		print("{}: basisscore = {}".format(student_naam, score))
+		scorenamen.append(student_naam)
+		scorelijst.append(score)
+
+		student_naam = str(input('\n'
+		                         'geef nieuwe naam'))
+
+
+if __name__ == '__main__':
+	main()
